@@ -15,6 +15,7 @@ flush ruleset
 include "{{ nft_define_conf_path }}"
 
 table inet filter {
+	include "{{ nft_ct_helpers_conf_path }}"
 	chain global {
 {% for group, rules in globalmerged|dictsort  %}
 		# {{ group }}

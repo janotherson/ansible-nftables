@@ -157,6 +157,18 @@
   when: (nft_enabled|bool and
          nft__forward_table_manage|bool)
 
+- name: Filter table - generate ct helpers rules file
+  ansible.builtin.template:
+    src: "{{ nft_ct_helpers_conf_content }}"
+    dest: "{{ nft_ct_helpers_conf_path }}"
+    owner: root
+    group: root
+    mode: 0600
+    backup: yes
+  notify: ['Reload nftables service']
+  when: (nft_enabled|bool and
+         nft__ct_helpers_manage|bool)
+
 # Nat table content [[[1
 - name: Nat table - generate prerouting rules file
   ansible.builtin.template:

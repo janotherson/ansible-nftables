@@ -1,0 +1,20 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+{{ ansible_managed | comment }}
+{% set ctmerged = nft_ct_helpers_default_rules.copy() %}
+{% set _ = ctmerged.update(nft_ct_helpers_rules) %}
+{% set _ = ctmerged.update(nft_ct_helpers_group_rules) %}
+{% if nft_merged_groups and hostvars[inventory_hostname]['nft_combined_rules'].nft_ct_helpers_group_rules is defined %}
+  {% set _ = ctmerged.update(hostvars[inventory_hostname]['nft_combined_rules'].nft_ct_helpers_group_rules) %}
+{% endif %}
+{% set _ = ctmerged.update(nft_ct_helpers_host_rules) %}
+
+{% for helper, rules in ctmerged|dictsort  %}
+  {% if rules %}
+ct helper {{ helper }} {
+    {% for rule in rules %}
+	{{ rule }}
+    {% endfor %}
+}
+  {% endif %}
+
+{% endfor %}
